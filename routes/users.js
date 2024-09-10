@@ -18,11 +18,13 @@ async function createAPIUser(uuid) {
     headers: {
       "X-Reference-Id": uuid,
       "Content-Type": "application/json",
-      "Ocp-Apim-Subscription-Key": "cee4df9cd79540ba830c1c479b3f5bf0",
+      "Ocp-Apim-Subscription-Key": "89b34d5304d443d3ba0b2f81d72904f9",
     },
     data: requestData,
   };
   const response = await axios.request(config);
+  console.log(response);
+  
   return response;
 }
 
@@ -32,7 +34,7 @@ async function getAPIKey(uuid) {
     method: "post",
     url: `https://sandbox.momodeveloper.mtn.com/v1_0/apiuser/${uuid}/apikey`,
     headers: {
-      "Ocp-Apim-Subscription-Key": "cee4df9cd79540ba830c1c479b3f5bf0",
+      "Ocp-Apim-Subscription-Key": "89b34d5304d443d3ba0b2f81d72904f9",
     },
   };
   const response = await axios.request(config);
@@ -47,7 +49,7 @@ async function getAccessToken(uuid, apiKey) {
     url: "https://sandbox.momodeveloper.mtn.com/collection/token/",
     headers: {
       Authorization: `Basic ${auth}`,
-      "Ocp-Apim-Subscription-Key": "cee4df9cd79540ba830c1c479b3f5bf0",
+      "Ocp-Apim-Subscription-Key": "89b34d5304d443d3ba0b2f81d72904f9",
     },
   };
   const response = await axios.request(config);
@@ -56,14 +58,14 @@ async function getAccessToken(uuid, apiKey) {
 
 // Function to initiate a payment request
 async function initiatePayment(uuid, accessToken,paymentInfo) {
-  // console.log(paymentInfo);
+  console.log(paymentInfo);
   const requestData = JSON.stringify({
     amount: "1000",
     currency: "EUR",
-    externalId: paymentInfo.externalId,
+    externalId: "46733123450",
     payer: {
       partyIdType: "MSISDN",
-      partyId: "1234567",
+      partyId: "46733123450",
     },
     payerMessage: "please Pay",
     payeeNote: "confirm the payment bro",
@@ -76,7 +78,7 @@ async function initiatePayment(uuid, accessToken,paymentInfo) {
       Authorization: `Bearer ${accessToken}`,
       "X-Reference-Id": uuid,
       "X-Target-Environment": "sandbox",
-      "Ocp-Apim-Subscription-Key": "cee4df9cd79540ba830c1c479b3f5bf0",
+      "Ocp-Apim-Subscription-Key": "89b34d5304d443d3ba0b2f81d72904f9",
       "Content-Type": "application/json",
     },
     data: requestData,
@@ -94,15 +96,23 @@ router.route("/").post(async (req, res) => {
     const apiUserResponse = await createAPIUser(uuid);
 
     if (apiUserResponse.status === 201) {
+      console.log(apiUserResponse.status);
+      
       const apiKey = await getAPIKey(uuid);
+      console.log(apiKey);
+
       const accessToken = await getAccessToken(uuid, apiKey);
+      console.log(accessToken);
+
       const paymentStatus = await initiatePayment(uuid, accessToken,req.body);
+      console.log(paymentStatus);
+      
       res.send(paymentStatus);
     } else {
       res.status(apiUserResponse.status).send(apiUserResponse.statusText);
     }
   } catch (error) {
-    console.error(error);
+    console.error(`{${error} someting wrongeee}`);
     res.status(500).send("An error occurred.");
   }
 });
