@@ -3,6 +3,7 @@ const axios = require('axios');
 const cors = require("cors")
 // const { log } = require('console');
 const app = express();
+require('dotenv').config();
 const port = 3300;
 // app.use(cors)
 app.use(loger)

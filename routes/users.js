@@ -3,6 +3,7 @@ const axios = require("axios");
 const bodyParser = require("body-parser");
 const router = express.Router();
 router.use(bodyParser.json());
+require('dotenv').config();
 // Function to generate a UUID
 async function generateUUID() {
   const response = await axios.get("https://www.uuidgenerator.net/api/version4");
@@ -18,7 +19,7 @@ async function createAPIUser(uuid) {
     headers: {
       "X-Reference-Id": uuid,
       "Content-Type": "application/json",
-      "Ocp-Apim-Subscription-Key": "89b34d5304d443d3ba0b2f81d72904f9",
+    "Ocp-Apim-Subscription-Key": `"${process.env.SUBSCRIPTION_KEY}"`,
     },
     data: requestData,
   };
@@ -34,7 +35,7 @@ async function getAPIKey(uuid) {
     method: "post",
     url: `https://sandbox.momodeveloper.mtn.com/v1_0/apiuser/${uuid}/apikey`,
     headers: {
-      "Ocp-Apim-Subscription-Key": "89b34d5304d443d3ba0b2f81d72904f9",
+      "Ocp-Apim-Subscription-Key": `"${process.env.SUBSCRIPTION_KEY}"`,
     },
   };
   const response = await axios.request(config);
@@ -49,7 +50,7 @@ async function getAccessToken(uuid, apiKey) {
     url: "https://sandbox.momodeveloper.mtn.com/collection/token/",
     headers: {
       Authorization: `Basic ${auth}`,
-      "Ocp-Apim-Subscription-Key": "89b34d5304d443d3ba0b2f81d72904f9",
+      "Ocp-Apim-Subscription-Key": `"${process.env.SUBSCRIPTION_KEY}"`,
     },
   };
   const response = await axios.request(config);
@@ -78,7 +79,7 @@ async function initiatePayment(uuid, accessToken,paymentInfo) {
       Authorization: `Bearer ${accessToken}`,
       "X-Reference-Id": uuid,
       "X-Target-Environment": "sandbox",
-      "Ocp-Apim-Subscription-Key": "89b34d5304d443d3ba0b2f81d72904f9",
+      "Ocp-Apim-Subscription-Key": `"${process.env.SUBSCRIPTION_KEY}"`,
       "Content-Type": "application/json",
     },
     data: requestData,
