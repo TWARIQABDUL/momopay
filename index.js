@@ -4,10 +4,11 @@ const cors = require("cors")
 // const { log } = require('console');
 const app = express();
 require('dotenv').config();
-const port = 3300;
+// const port = 3300;
+const port = process.env.PORT || 3300;
 // app.use(cors)
-app.use(loger)
 app.use(cors());
+app.use(loger)
 
 app.get('/',(req,res)=>{
     console.log("fucc");
